@@ -1,0 +1,3 @@
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/node_modules/react-native-image-picker/android/build/generated/source/codegen/jni/CMakeLists.txt
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt

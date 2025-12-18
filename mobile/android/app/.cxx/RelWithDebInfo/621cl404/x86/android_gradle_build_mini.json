@@ -1,0 +1,43 @@
+{
+  "buildFiles": [
+    "/Users/CODE/SP/rn-video-player/VideoPreviewApp/node_modules/react-native-image-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/CODE/SP/rn-video-player/VideoPreviewApp/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/CODE/SP/rn-video-player/VideoPreviewApp/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/cecep/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/cecep/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "react_codegen_RNVectorIconsSpec::@479809fae146501fd34d": {
+      "artifactName": "react_codegen_RNVectorIconsSpec",
+      "abi": "x86",
+      "runtimeFiles": []
+    },
+    "react_codegen_RNImagePickerSpec::@f66ee9a2efecfb28bee4": {
+      "artifactName": "react_codegen_RNImagePickerSpec",
+      "abi": "x86",
+      "runtimeFiles": []
+    },
+    "appmodules::@6890427a1f51a3e7e1df": {
+      "artifactName": "appmodules",
+      "abi": "x86",
+      "output": "/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/build/intermediates/cxx/RelWithDebInfo/621cl404/obj/x86/libappmodules.so",
+      "runtimeFiles": [
+        "/Users/cecep/.gradle/caches/8.14.1/transforms/b6a6ccfe82730aba80016e7d9940f54a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.x86/libfbjni.so",
+        "/Users/cecep/.gradle/caches/8.14.1/transforms/60eef7dfacf480bffc823686b1403bef/transformed/react-android-0.80.1-release/prefab/modules/jsi/libs/android.x86/libjsi.so",
+        "/Users/cecep/.gradle/caches/8.14.1/transforms/60eef7dfacf480bffc823686b1403bef/transformed/react-android-0.80.1-release/prefab/modules/reactnative/libs/android.x86/libreactnative.so"
+      ]
+    }
+  }
+}

@@ -1,0 +1,81 @@
+/* QuillEditor Component Styles */
+.quill-wrapper {
+  position: relative;
+}
+
+.quill-wrapper .ql-toolbar {
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  padding: 8px;
+  position: sticky !important;
+  top: 0;
+  z-index: 100;
+  background: white;
+  display: flex !important;
+  visibility: visible !important;
+}
+
+.quill-wrapper .ql-container {
+  border-bottom: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+}
+
+.quill-wrapper .ql-editor {
+  min-height: 200px;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 12px 15px;
+}
+
+.quill-wrapper .ql-editor.ql-blank::before {
+  color: #999;
+  font-style: italic;
+}
+
+/* Image styling in editor */
+.quill-wrapper .ql-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 8px 0;
+  display: block;
+}
+
+/* Ensure toolbar stability */
+.quill-wrapper .ql-toolbar.ql-snow {
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  padding: 8px;
+}
+
+.quill-wrapper .ql-toolbar .ql-formats {
+  margin-right: 15px;
+}
+
+.quill-wrapper .ql-toolbar .ql-formats:last-child {
+  margin-right: 0;
+}
+
+/* Prevent toolbar from disappearing after content changes */
+.quill-wrapper .ql-snow .ql-toolbar {
+  position: relative !important;
+  display: block !important;
+}
+
+/* Suppress React Quill development warnings */
+.ql-tooltip {
+  z-index: 10000;
+}
+
+/* Enhanced image handling */
+.quill-wrapper .ql-editor p img {
+  display: block;
+  margin: 8px auto;
+}

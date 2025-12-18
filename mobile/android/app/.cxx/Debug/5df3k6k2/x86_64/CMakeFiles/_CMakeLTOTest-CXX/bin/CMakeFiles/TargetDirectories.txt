@@ -1,0 +1,4 @@
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/Debug/5df3k6k2/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/Debug/5df3k6k2/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/Debug/5df3k6k2/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/Debug/5df3k6k2/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir

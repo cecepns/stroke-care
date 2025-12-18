@@ -1,0 +1,9 @@
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/armeabi-v7a/CMakeFiles/appmodules.dir
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/armeabi-v7a/RNImagePickerSpec_autolinked_build/CMakeFiles/react_codegen_RNImagePickerSpec.dir
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/armeabi-v7a/RNImagePickerSpec_autolinked_build/CMakeFiles/edit_cache.dir
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/armeabi-v7a/RNImagePickerSpec_autolinked_build/CMakeFiles/rebuild_cache.dir
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/armeabi-v7a/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/armeabi-v7a/RNVectorIconsSpec_autolinked_build/CMakeFiles/edit_cache.dir
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/armeabi-v7a/RNVectorIconsSpec_autolinked_build/CMakeFiles/rebuild_cache.dir

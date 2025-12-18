@@ -1,0 +1,22 @@
+# ninja log v5
+0	6	0	/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/armeabi-v7a/CMakeFiles/cmake.verify_globs	2b609f4ba5b2533b
+1	1420	1751550697375467899	RNImagePickerSpec_autolinked_build/CMakeFiles/react_codegen_RNImagePickerSpec.dir/react/renderer/components/RNImagePickerSpec/States.cpp.o	9b1b8ed26faaa947
+1	1614	1751550697571062147	RNImagePickerSpec_autolinked_build/CMakeFiles/react_codegen_RNImagePickerSpec.dir/react/renderer/components/RNImagePickerSpec/EventEmitters.cpp.o	afa9ee0e96ad1190
+1	1987	1751550697942989764	RNImagePickerSpec_autolinked_build/CMakeFiles/react_codegen_RNImagePickerSpec.dir/react/renderer/components/RNImagePickerSpec/Props.cpp.o	c7fc0622a97fefd3
+1	2212	1751550698167169589	RNImagePickerSpec_autolinked_build/CMakeFiles/react_codegen_RNImagePickerSpec.dir/react/renderer/components/RNImagePickerSpec/RNImagePickerSpecJSI-generated.cpp.o	c1da07e94c9631ea
+1	2236	1751550698181815598	RNImagePickerSpec_autolinked_build/CMakeFiles/react_codegen_RNImagePickerSpec.dir/react/renderer/components/RNImagePickerSpec/ShadowNodes.cpp.o	9d792d42b9b7f9f2
+0	2284	1751550698240106869	CMakeFiles/appmodules.dir/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	e63931e0ccb53b48
+1	2285	1751550698237434475	RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/RNVectorIconsSpec-generated.cpp.o	1aa0e0a4cd7c8144
+1	2288	1751550698235617368	RNImagePickerSpec_autolinked_build/CMakeFiles/react_codegen_RNImagePickerSpec.dir/RNImagePickerSpec-generated.cpp.o	2b97dad1b54d617e
+1	2289	1751550698232198800	RNImagePickerSpec_autolinked_build/CMakeFiles/react_codegen_RNImagePickerSpec.dir/react/renderer/components/RNImagePickerSpec/ComponentDescriptors.cpp.o	2e84d5d5634474bd
+1	2455	1751550698405023283	CMakeFiles/appmodules.dir/OnLoad.cpp.o	3fbcd37860166afa
+1615	2817	1751550698771862757	RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/EventEmitters.cpp.o	22dcddafe05d90d3
+2284	3083	1751550699040647275	RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/States.cpp.o	5fec8fff8e41545
+1424	3095	1751550699052627333	RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/ComponentDescriptors.cpp.o	88ce4b4da4e86c38
+2212	3261	1751550699220382387	RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/Props.cpp.o	1ef0c0db14450bff
+1987	3308	1751550699265272533	RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/RNVectorIconsSpecJSI-generated.cpp.o	f383a9e60c75c62e
+2237	3391	1751550699350467017	RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/ShadowNodes.cpp.o	58396cd01463570a
+3391	3426	1751550699385665928	/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/build/intermediates/cxx/RelWithDebInfo/621cl404/obj/armeabi-v7a/libappmodules.so	88ac046054e7b945
+1	14	0	/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/armeabi-v7a/CMakeFiles/cmake.verify_globs	2b609f4ba5b2533b
+0	6	0	/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/.cxx/RelWithDebInfo/621cl404/armeabi-v7a/CMakeFiles/cmake.verify_globs	2b609f4ba5b2533b
+0	8	0	clean	dac58eaa0cb2f565

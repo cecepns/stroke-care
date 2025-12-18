@@ -1,0 +1,1 @@
+/Users/CODE/SP/rn-video-player/VideoPreviewApp/android/app/build/intermediates/cxx/RelWithDebInfo/621cl404/obj/x86

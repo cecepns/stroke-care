@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary app colors -->
+    <color name="primary_color">#8BCDF0</color>
+    <color name="primary_dark">#6BA8D0</color>
+    <color name="primary_light">#B3E0F5</color>
+    
+    <!-- Common colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray">#F5F5F5</color>
+    <color name="dark_gray">#666666</color>
+    
+    <!-- Status colors -->
+    <color name="success">#4CAF50</color>
+    <color name="warning">#FF9800</color>
+    <color name="error">#F44336</color>
+    
+    <!-- Transparent -->
+    <color name="transparent">#00000000</color>
+</resources>
