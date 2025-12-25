@@ -191,7 +191,7 @@ app.get('/api/materials', authenticateToken, async (req, res) => {
       SELECT m.*, u.name as author_name 
       FROM materials m 
       JOIN users u ON m.author_id = u.id 
-      ORDER BY m.created_at DESC
+      ORDER BY m.sort_order ASC, m.created_at DESC
     `);
     res.json(materials);
   } catch (error) {
@@ -202,11 +202,20 @@ app.get('/api/materials', authenticateToken, async (req, res) => {
 
 app.post('/api/materials', authenticateToken, async (req, res) => {
   try {
-    const { title, content, video_url, description, type, status = 'draft' } = req.body;
+    const { title, content, video_url, description, type, status = 'draft', sort_order } = req.body;
+    
+    // Get max sort_order if not provided
+    let finalSortOrder = sort_order;
+    if (finalSortOrder === undefined || finalSortOrder === null) {
+      const [maxResult] = await pool.execute(
+        'SELECT COALESCE(MAX(sort_order), 0) as max_order FROM materials'
+      );
+      finalSortOrder = (maxResult[0].max_order || 0) + 1;
+    }
     
     const [result] = await pool.execute(
-      'INSERT INTO materials (title, content, video_url, description, type, status, author_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [title, content, video_url, description, type, status, req.user.id]
+      'INSERT INTO materials (title, content, video_url, description, type, status, author_id, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [title, content, video_url, description, type, status, req.user.id, finalSortOrder]
     );
 
     res.status(201).json({ 
@@ -222,17 +231,85 @@ app.post('/api/materials', authenticateToken, async (req, res) => {
 app.put('/api/materials/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content, video_url, description, type, status } = req.body;
+    const { title, content, video_url, description, type, status, sort_order } = req.body;
+
+    // Build update query dynamically based on provided fields
+    const updateFields = [];
+    const updateValues = [];
+
+    if (title !== undefined) {
+      updateFields.push('title = ?');
+      updateValues.push(title);
+    }
+    if (content !== undefined) {
+      updateFields.push('content = ?');
+      updateValues.push(content);
+    }
+    if (video_url !== undefined) {
+      updateFields.push('video_url = ?');
+      updateValues.push(video_url);
+    }
+    if (description !== undefined) {
+      updateFields.push('description = ?');
+      updateValues.push(description);
+    }
+    if (type !== undefined) {
+      updateFields.push('type = ?');
+      updateValues.push(type);
+    }
+    if (status !== undefined) {
+      updateFields.push('status = ?');
+      updateValues.push(status);
+    }
+    if (sort_order !== undefined) {
+      updateFields.push('sort_order = ?');
+      updateValues.push(sort_order);
+    }
+
+    updateFields.push('updated_at = NOW()');
+    updateValues.push(id);
 
     await pool.execute(
-      'UPDATE materials SET title = ?, content = ?, video_url = ?, description = ?, type = ?, status = ?, updated_at = NOW() WHERE id = ?',
-      [title, content, video_url, description, type, status, id]
+      `UPDATE materials SET ${updateFields.join(', ')} WHERE id = ?`,
+      updateValues
     );
 
     res.json({ message: 'Material updated successfully' });
   } catch (error) {
     console.error('Update material error:', error);
     res.status(500).json({ message: 'Failed to update material' });
+  }
+});
+
+// Update materials order (bulk update)
+app.put('/api/materials/order', authenticateToken, async (req, res) => {
+  try {
+    const { orders } = req.body; // Array of { id, sort_order }
+
+    if (!Array.isArray(orders) || orders.length === 0) {
+      return res.status(400).json({ message: 'Invalid orders data' });
+    }
+
+    // Update all materials in a transaction
+    await pool.execute('START TRANSACTION');
+    
+    try {
+      for (const { id, sort_order } of orders) {
+        await pool.execute(
+          'UPDATE materials SET sort_order = ? WHERE id = ?',
+          [sort_order, id]
+        );
+      }
+      
+      await pool.execute('COMMIT');
+      res.json({ message: 'Materials order updated successfully' });
+    } catch (error) {
+      await pool.execute('ROLLBACK');
+      throw error;
+    }
+  } catch (error) {
+    console.error('Update materials order error:', error);
+    res.status(500).json({ message: 'Failed to update materials order' });
   }
 });
 
@@ -794,15 +871,30 @@ app.get('/api/screening/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// Admin: Get all screening results
+// Admin: Get all screening results with pagination
 app.get('/api/admin/screenings', authenticateToken, requireAdmin, async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    // Get total count
+    const [countResult] = await pool.execute(`
+      SELECT COUNT(*) as total
+      FROM screenings s
+      JOIN users u ON s.user_id = u.id
+    `);
+    const total = countResult[0].total;
+    const totalPages = Math.ceil(total / limit);
+
+    // Get paginated screenings
     const [screenings] = await pool.execute(`
       SELECT s.*, u.name as user_name, u.email as user_email
       FROM screenings s
       JOIN users u ON s.user_id = u.id
       ORDER BY s.created_at DESC
-    `);
+      LIMIT ? OFFSET ?
+    `, [limit, offset]);
 
     // Parse JSON answers
     const screeningsWithParsedAnswers = screenings.map(screening => ({
@@ -812,24 +904,55 @@ app.get('/api/admin/screenings', authenticateToken, requireAdmin, async (req, re
         : screening.answers,
     }));
 
-    res.json(screeningsWithParsedAnswers);
+    res.json({
+      data: screeningsWithParsedAnswers,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages
+      }
+    });
   } catch (error) {
     console.error('Fetch all screenings error:', error);
     res.status(500).json({ message: 'Failed to fetch screenings' });
   }
 });
 
-// Admin: Get all health notes
+// Admin: Get all health notes with pagination
 app.get('/api/admin/health-notes', authenticateToken, requireAdmin, async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    // Get total count
+    const [countResult] = await pool.execute(`
+      SELECT COUNT(*) as total
+      FROM health_notes hn
+      JOIN users u ON hn.user_id = u.id
+    `);
+    const total = countResult[0].total;
+    const totalPages = Math.ceil(total / limit);
+
+    // Get paginated health notes
     const [notes] = await pool.execute(`
       SELECT hn.*, u.name as user_name, u.email as user_email
       FROM health_notes hn
       JOIN users u ON hn.user_id = u.id
       ORDER BY hn.note_date DESC, hn.created_at DESC
-    `);
+      LIMIT ? OFFSET ?
+    `, [limit, offset]);
     
-    res.json(notes);
+    res.json({
+      data: notes,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages
+      }
+    });
   } catch (error) {
     console.error('Fetch all health notes error:', error);
     res.status(500).json({ message: 'Failed to fetch health notes' });

@@ -774,6 +774,7 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     marginRight: 8,
+    color: '#000',
   },
   unit: {
     fontSize: 16,
@@ -797,6 +798,7 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     textAlign: 'center',
+    color: '#000',
   },
   bpLabel: {
     fontSize: 12,
@@ -842,6 +844,7 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 14,
     minHeight: 100,
+    color: '#000',
   },
   saveButton: {
     backgroundColor: '#4CAF50',

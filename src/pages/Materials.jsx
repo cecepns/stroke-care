@@ -25,6 +25,60 @@ const Materials = () => {
     }
   };
 
+  const handleMoveUp = async (material) => {
+    // Find position in all materials (not filtered)
+    const allMaterialsSorted = [...materials].sort((a, b) => {
+      const orderA = a.sort_order || 0;
+      const orderB = b.sort_order || 0;
+      if (orderA !== orderB) return orderA - orderB;
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+    
+    const currentIndex = allMaterialsSorted.findIndex(m => m.id === material.id);
+    if (currentIndex <= 0) return;
+
+    const prevMaterial = allMaterialsSorted[currentIndex - 1];
+    const newOrders = [
+      { id: material.id, sort_order: prevMaterial.sort_order || 0 },
+      { id: prevMaterial.id, sort_order: material.sort_order || 0 }
+    ];
+
+    try {
+      await api.put('/materials/order', { orders: newOrders });
+      fetchMaterials();
+    } catch (error) {
+      console.error('Error updating order:', error);
+      alert('Gagal mengubah urutan materi');
+    }
+  };
+
+  const handleMoveDown = async (material) => {
+    // Find position in all materials (not filtered)
+    const allMaterialsSorted = [...materials].sort((a, b) => {
+      const orderA = a.sort_order || 0;
+      const orderB = b.sort_order || 0;
+      if (orderA !== orderB) return orderA - orderB;
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+    
+    const currentIndex = allMaterialsSorted.findIndex(m => m.id === material.id);
+    if (currentIndex >= allMaterialsSorted.length - 1) return;
+
+    const nextMaterial = allMaterialsSorted[currentIndex + 1];
+    const newOrders = [
+      { id: material.id, sort_order: nextMaterial.sort_order || 0 },
+      { id: nextMaterial.id, sort_order: material.sort_order || 0 }
+    ];
+
+    try {
+      await api.put('/materials/order', { orders: newOrders });
+      fetchMaterials();
+    } catch (error) {
+      console.error('Error updating order:', error);
+      alert('Gagal mengubah urutan materi');
+    }
+  };
+
   const handleCreateMaterial = (type) => {
     setMaterialType(type);
     setEditingMaterial(null);
@@ -170,10 +224,15 @@ const Materials = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredMaterials.map((material) => (
-            <div key={material.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          {filteredMaterials.map((material, index) => (
+            <div key={material.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 relative">
+              {/* Order Badge */}
+              <div className="absolute top-4 left-4 bg-primary-600 text-white text-xs font-bold rounded-full w-8 h-8 flex items-center justify-center">
+                {index + 1}
+              </div>
+
               <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 ml-10">
                   <div className="text-gray-500">
                     {getTypeIcon(material.type)}
                   </div>
@@ -182,9 +241,31 @@ const Materials = () => {
                   </span>
                 </div>
                 <div className="flex space-x-2">
+                  {/* Order Controls */}
+                  <div className="flex flex-col space-y-1 mr-2">
+                    <button
+                      onClick={() => handleMoveUp(material)}
+                      className="text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed"
+                      title="Pindah ke atas"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => handleMoveDown(material)}
+                      className="text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed"
+                      title="Pindah ke bawah"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
                   <button
                     onClick={() => handleEditMaterial(material)}
                     className="text-primary-600 hover:text-primary-700"
+                    title="Edit"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -193,6 +274,7 @@ const Materials = () => {
                   <button
                     onClick={() => handleDeleteMaterial(material.id)}
                     className="text-red-600 hover:text-red-700"
+                    title="Hapus"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

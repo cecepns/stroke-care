@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,15 +7,13 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
-  Image,
   Linking,
 } from 'react-native';
-import { WebView } from 'react-native-webview';
+import YoutubePlayer from 'react-native-youtube-iframe';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
   extractYouTubeVideoId,
   isYouTubeUrl,
-  getYouTubeThumbnail,
 } from '../utils/YouTubeUtils';
 
 interface YouTubePlayerProps {
@@ -30,7 +28,7 @@ interface YouTubePlayerProps {
 const { width } = Dimensions.get('window');
 const PLAYER_HEIGHT = (width * 9) / 16; // 16:9 aspect ratio
 
-const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
+const YouTubePlayerComponent: React.FC<YouTubePlayerProps> = ({
   url,
   title,
   style,
@@ -38,162 +36,79 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
   onError,
   onLoad,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPlayer, setShowPlayer] = useState(autoPlay);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
-  const webViewRef = useRef<WebView>(null);
+  const [playing, setPlaying] = useState(autoPlay);
+  const playerRef = useRef(null);
 
   // Extract video ID and prepare URLs
   const videoId = extractYouTubeVideoId(url);
   const isValidYouTubeUrl = isYouTubeUrl(url);
-  const thumbnailUrl = videoId ? getYouTubeThumbnail(videoId, 'hqdefault') : null;
-  
-  // Create embed URL for WebView with mobile-optimized parameters
-  const embedUrl = videoId 
-    ? `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=${autoPlay ? 1 : 0}&controls=1&modestbranding=1&rel=0&playsinline=1&widget_referrer=https://www.youtube.com`
-    : url;
 
-  // Different User-Agent strings for fallback
-  const getUserAgent = () => {
-    const userAgents = [
-      'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1',
-      'Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1',
-      'Mozilla/5.0 (Linux; Android 10; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36'
-    ];
-    return userAgents[retryCount % userAgents.length];
-  };
-
-  const handlePlayPress = () => {
-    if (!isValidYouTubeUrl) {
-      Alert.alert('Error', 'URL video tidak valid');
-      return;
-    }
-
-    setIsLoading(true);
-    setShowPlayer(true);
-    setError(null);
-  };
-
-  const handleWebViewLoad = () => {
+  const onReady = useCallback(() => {
     setIsLoading(false);
     onLoad?.();
-  };
+  }, [onLoad]);
 
-  const handleWebViewError = (error: any) => {
+  const onPlayerError = useCallback((error: string) => {
     setIsLoading(false);
-    console.error('YouTube WebView Error:', error, 'Retry count:', retryCount);
+    console.error('YouTube Player Error:', error);
     
-    // Try different User-Agent if retry count is less than 3
-    if (retryCount < 2) {
-      console.log('Retrying with different User-Agent...');
-      setRetryCount(retryCount + 1);
-      setIsLoading(true);
-      // Force WebView to reload with new User-Agent
-      if (webViewRef.current) {
-        webViewRef.current.reload();
-      }
-      return;
-    }
-    
-    // Check if it's a YouTube restriction error
-    if (error?.nativeEvent?.description?.includes('restricted') || 
-        error?.nativeEvent?.description?.includes('not available')) {
-      setError('Video tidak tersedia atau dibatasi untuk ditonton di aplikasi mobile');
-    } else {
-      setError('Gagal memuat video setelah beberapa percobaan');
-    }
-    
-    setShowPlayer(false);
+    setError('Video tidak dapat dimuat. Mungkin video dibatasi atau tidak tersedia.');
     onError?.(error);
-  };
+  }, [onError]);
 
-  const handleWebViewLoadStart = () => {
-    setIsLoading(true);
-  };
+  const onChangeState = useCallback((state: string) => {
+    console.log('Player state:', state);
+    if (state === 'playing') {
+      setIsLoading(false);
+      setPlaying(true);
+    } else if (state === 'paused') {
+      setPlaying(false);
+    } else if (state === 'ended') {
+      setPlaying(false);
+    }
+  }, []);
 
-  const renderThumbnail = () => (
-    <View style={[styles.thumbnailContainer, style]}>
-      {thumbnailUrl ? (
-        <Image source={{ uri: thumbnailUrl }} style={styles.thumbnail} />
-      ) : (
-        <View style={[styles.thumbnail, styles.placeholderThumbnail]}>
-          <Icon name="play-circle-outline" size={64} color="#fff" />
-        </View>
-      )}
-      
-      <TouchableOpacity style={styles.playButton} onPress={handlePlayPress}>
-        <View style={styles.playButtonInner}>
-          <Icon name="play-arrow" size={32} color="#fff" />
-        </View>
-      </TouchableOpacity>
+  const renderPlayer = () => {
+    if (!videoId) {
+      return null;
+    }
 
-      {title && (
-        <View style={styles.titleOverlay}>
-          <Text style={styles.thumbnailTitle} numberOfLines={2}>
-            {title}
-          </Text>
-        </View>
-      )}
+    return (
+      <View style={[styles.playerContainer, style]}>
+        <YoutubePlayer
+          ref={playerRef}
+          height={PLAYER_HEIGHT}
+          play={playing}
+          videoId={videoId}
+          onReady={onReady}
+          onError={onPlayerError}
+          onChangeState={onChangeState}
+          webViewProps={{
+            androidLayerType: 'hardware',
+          }}
+          initialPlayerParams={{
+            controls: true,
+            modestbranding: true,
+            showClosedCaptions: false,
+            rel: false,
+            preventFullScreen: false,
+          }}
+        />
 
-      {isLoading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#fff" />
-        </View>
-      )}
-    </View>
-  );
-
-  const renderPlayer = () => (
-    <View style={[styles.playerContainer, style]}>
-      <WebView
-        ref={webViewRef}
-        source={{ 
-          uri: embedUrl,
-          headers: {
-            'Referer': 'https://www.youtube.com/',
-            'User-Agent': getUserAgent()
-          }
-        }}
-        style={styles.webview}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        allowsInlineMediaPlayback={true}
-        mediaPlaybackRequiresUserAction={false}
-        mixedContentMode="compatibility"
-        thirdPartyCookiesEnabled={true}
-        onLoad={handleWebViewLoad}
-        onError={handleWebViewError}
-        onLoadStart={handleWebViewLoadStart}
-        startInLoadingState={true}
-        renderLoading={() => (
+        {isLoading && (
           <View style={styles.loadingOverlay}>
             <ActivityIndicator size="large" color="#fff" />
           </View>
         )}
-      />
-
-      <TouchableOpacity
-        style={styles.minimizeButton}
-        onPress={() => {
-          setShowPlayer(false);
-        }}
-      >
-        <Icon name="close" size={24} color="#fff" />
-      </TouchableOpacity>
-
-      {isLoading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#fff" />
-        </View>
-      )}
-    </View>
-  );
+      </View>
+    );
+  };
 
   const handleRetry = () => {
-    setRetryCount(0);
     setError(null);
-    handlePlayPress();
+    setIsLoading(true);
   };
 
   const renderError = () => (
@@ -243,64 +158,10 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
     return renderError();
   }
 
-  if (showPlayer) {
-    return renderPlayer();
-  }
-
-  return renderThumbnail();
+  return renderPlayer();
 };
 
 const styles = StyleSheet.create({
-  thumbnailContainer: {
-    width: '100%',
-    height: PLAYER_HEIGHT,
-    backgroundColor: '#000',
-    borderRadius: 12,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  thumbnail: {
-    width: '100%',
-    height: '100%',
-  },
-  placeholderThumbnail: {
-    backgroundColor: '#333',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  playButton: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: [{ translateX: -30 }, { translateY: -30 }],
-    zIndex: 2,
-  },
-  playButtonInner: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'rgba(255, 0, 0, 0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  titleOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    padding: 12,
-  },
-  thumbnailTitle: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
   playerContainer: {
     width: '100%',
     height: PLAYER_HEIGHT,
@@ -308,20 +169,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     position: 'relative',
-  },
-  webview: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#000',
-  },
-  minimizeButton: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 20,
-    padding: 8,
-    zIndex: 1,
   },
   loadingOverlay: {
     position: 'absolute',
@@ -371,4 +218,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default YouTubePlayer;
+export default YouTubePlayerComponent;

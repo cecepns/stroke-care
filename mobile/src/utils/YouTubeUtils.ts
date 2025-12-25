@@ -15,25 +15,29 @@ export const extractYouTubeVideoId = (url: string): string | null => {
   // Remove any leading/trailing whitespace
   const cleanUrl = url.trim();
 
-  // Various YouTube URL patterns
+  // Various YouTube URL patterns - more flexible to handle query params
   const patterns = [
-    // Standard watch URL: https://www.youtube.com/watch?v=VIDEO_ID
-    /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/,
-    // Embed URL: https://www.youtube.com/embed/VIDEO_ID
-    /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
-    // Short URL: https://youtu.be/VIDEO_ID
-    /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/,
-    // YouTube URL with additional parameters
-    /(?:youtube\.com\/watch\?.*v=)([a-zA-Z0-9_-]{11})/,
+    // Standard watch URL: https://www.youtube.com/watch?v=VIDEO_ID or with other params
+    /(?:youtube\.com\/watch\?(?:[^&]*&)*v=)([a-zA-Z0-9_-]{11})/,
+    // Embed URL: https://www.youtube.com/embed/VIDEO_ID (with or without params)
+    /(?:youtube(?:-nocookie)?\.com\/embed\/)([a-zA-Z0-9_-]{11})(?:[?&]|$)/,
+    // Short URL: https://youtu.be/VIDEO_ID (with or without params)
+    /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[?&]|$)/,
+    // Fallback: any youtube.com/embed/ followed by video ID
+    /youtube(?:-nocookie)?\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+    // Fallback: v= parameter anywhere in URL
+    /[?&]v=([a-zA-Z0-9_-]{11})(?:[&#]|$)/,
   ];
 
   for (const pattern of patterns) {
     const match = cleanUrl.match(pattern);
     if (match && match[1]) {
+      console.log('✅ Video ID extracted:', match[1], 'from URL:', cleanUrl);
       return match[1];
     }
   }
 
+  console.warn('❌ Could not extract video ID from URL:', cleanUrl);
   return null;
 };
 

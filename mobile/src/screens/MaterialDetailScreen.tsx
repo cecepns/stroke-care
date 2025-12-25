@@ -34,6 +34,8 @@ const MaterialDetailScreen: React.FC<MaterialDetailScreenProps> = ({
   const [imageModalVisible, setImageModalVisible] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
 
+  console.log(material)
+
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'article':
@@ -59,6 +61,10 @@ const MaterialDetailScreen: React.FC<MaterialDetailScreenProps> = ({
         return 'Podcast';
       case 'poster':
         return 'Poster';
+      case 'full':
+        return 'Video Full';
+      case 'part':
+        return 'Video Part';
       default:
         return 'Materi';
     }
@@ -74,6 +80,10 @@ const MaterialDetailScreen: React.FC<MaterialDetailScreenProps> = ({
         return '#FF9800';
       case 'poster':
         return '#4CAF50';
+      case 'full':
+        return '#2196F3';
+      case 'part':
+        return '#FF9800';
       default:
         return '#757575';
     }

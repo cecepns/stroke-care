@@ -12,6 +12,7 @@ import {
   Platform,
   Image,
   InteractionManager,
+  Linking,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -77,6 +78,21 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     navigation.navigate('Register');
   };
 
+  const handleForgotPassword = async () => {
+    const url = 'https://whatsapp.com/channel/0029Vb6VHB44o7qHILUXyr1N';
+    try {
+      const canOpen = await Linking.canOpenURL(url);
+      if (canOpen) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert('Error', 'Tidak dapat membuka link WhatsApp');
+      }
+    } catch (error) {
+      console.error('Error opening WhatsApp channel:', error);
+      Alert.alert('Error', 'Terjadi kesalahan saat membuka link');
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={[styles.container, { paddingTop: insets.top }]}
@@ -139,6 +155,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
               </TouchableOpacity>
             </View>
           </View>
+
+          <TouchableOpacity
+            style={styles.forgotPasswordLink}
+            onPress={handleForgotPassword}
+            disabled={isLoading}
+          >
+            <Text style={styles.forgotPasswordText}>Lupa Sandi?</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
@@ -236,6 +260,16 @@ const styles = StyleSheet.create({
   },
   passwordToggle: {
     padding: 4,
+  },
+  forgotPasswordLink: {
+    alignSelf: 'flex-end',
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  forgotPasswordText: {
+    fontSize: 14,
+    color: '#007AFF',
+    fontWeight: '400',
   },
   loginButton: {
     backgroundColor: '#A7D9F5',
